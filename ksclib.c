@@ -20,5 +20,6 @@
 #include <stddef.h>
 
 #include "src/ksclib-arena.c"
+#include "src/ksclib-lists.c"
 
 
