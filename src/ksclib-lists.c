@@ -16,12 +16,13 @@ enum kcl_lst_type {
 struct kcl_lst_obj {
 	void *datum;
 	struct kcl_lst_obj *next;
-	uint key;
+	//uint key;
 };
 
 struct kcl_list {
 	struct kcl_arena *arena;
 	struct kcl_lst_obj *list;
+	struct kcl_lst_obj *current;
 	enum kcl_lst_type type;
 	uint count;
 };
@@ -34,15 +35,15 @@ kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena)
 	new_list->type = type;
 	new_list->arena = arena;
 	new_list->list = NULL;
+	new_list->current = NULL;
 	new_list->count = 0;
 	return (new_list);
 }
 
 static uint
-kcl_lst_add_datum(struct kcl_list *list, void *datum, uint key)
+kcl_lst_add_datum(struct kcl_list *list, void *datum)
 {
 	struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
-	new_obj->key = key;
 	new_obj->datum = datum;
 	new_obj->next = list->list;
 	list->list = new_obj;
@@ -50,6 +51,29 @@ kcl_lst_add_datum(struct kcl_list *list, void *datum, uint key)
 	return (list->count);
 }
 
+static void *
+kcl_lst_get_first(struct kcl_list *list)
+{
+	if (list->count > 0) {
+		list->current = list->list;
+		return (list->current->datum);
+	} else {
+		return (NULL);
+	}
+}
+
+static void *
+kcl_lst_get_next(struct kcl_list *list)
+{
+	if (list->current->next) {
+		list->current = list->current->next;
+		return (list->current->datum);
+	} else {
+		return (NULL);
+	}
+}
+
+/*
 static void *
 kcl_lst_get_datum(struct kcl_list *list, uint key)
 {
@@ -63,4 +87,4 @@ kcl_lst_get_datum(struct kcl_list *list, uint key)
 	}
 	return (NULL);
 }
-	
+*/	

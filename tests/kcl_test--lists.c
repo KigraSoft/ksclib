@@ -10,10 +10,25 @@ const uint mblock_sz = 16;
 int
 main()
 {
-	//printf("File/Line: %s/%i:\n", __FILE__, __LINE__);
+	const char *one = "one";
+	const char *two = "two";
+	const char *three = "three";
+	char *tmp;
+	
 	struct kcl_arena *arena = kcl_arn_alloc(STACK, mblock_sz, mblock_sz, true);
 	struct kcl_list *list = kcl_lst_alloc_list(LNKLST, arena);
 
+	kcl_lst_add_datum(list, (void *)one);
+	kcl_lst_add_datum(list, (void *)two);
+	kcl_lst_add_datum(list, (void *)three);
+
+	tmp = (char *)kcl_lst_get_first(list);
+	while (tmp) {
+		printf("File/Line: %s/%i: Str: %s\n", __FILE__, __LINE__, tmp);
+		tmp = (char *)kcl_lst_get_next(list);
+	}
+
+	/*
 	uint *a = kcl_arn_push(arena, sizeof *a);
 	*a = 11;
 	kcl_lst_add_datum(list, a, 1);
@@ -26,7 +41,8 @@ main()
 	printf("Line: %i: Val a: %i\n", __LINE__, *a);
 	printf("Line: %i: Val b: %i\n", __LINE__, *b);
 	printf("Line: %i: Val c: %i\n", __LINE__, *c);
-
+	*/
+	
 	/*
 	assert( *a == 1);
 	*a = 2;
