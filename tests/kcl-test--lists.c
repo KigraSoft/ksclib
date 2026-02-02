@@ -16,7 +16,7 @@ main()
 	char *tmp;
 	
 	struct kcl_arena *arena = kcl_arn_alloc(STACK, mblock_sz, mblock_sz, true);
-	struct kcl_list *list = kcl_lst_alloc_list(LNKLST, arena);
+	struct kcl_list *list = kcl_lst_alloc_list(LNKLST, arena, 0);
 
 	kcl_lst_add_datum(list, (void *)one);
 	kcl_lst_add_datum(list, (void *)two);
@@ -27,6 +27,11 @@ main()
 		printf("File/Line: %s/%i: Str: %s\n", __FILE__, __LINE__, tmp);
 		tmp = (char *)kcl_lst_get_next(list);
 	}
+
+	struct kcl_list *varray = kcl_lst_alloc_list(VARRAY, arena, 10);
+	kcl_lst_set_element(varray, (void *)two, 0);
+	tmp = (char *)kcl_lst_get_element(varray, 0);
+	printf("File/Line: %s/%i: Idx: %i, Str: %s\n", __FILE__, __LINE__, 0, tmp);
 
 	/*
 	uint *a = kcl_arn_push(arena, sizeof *a);

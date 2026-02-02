@@ -93,5 +93,5 @@ kcl_arn_push(struct kcl_arena *arena, size_t size)
 static void
 kcl_arn_reset(struct kcl_arena *arena)
 {
-	arena->stack_pos = sizeof *arena;
+	arena->stack_pos = 0;
 }
