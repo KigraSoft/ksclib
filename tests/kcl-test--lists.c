@@ -5,7 +5,7 @@
 #include <assert.h>
 #include "../ksclib.c"
 
-const uint mblock_sz = 16;
+const unsigned int mblock_sz = 16;
 
 int
 main()
@@ -22,6 +22,13 @@ main()
 	kcl_lst_add_datum(list, (void *)two);
 	kcl_lst_add_datum(list, (void *)three);
 
+	tmp = (char *)kcl_lst_get_first(list);
+	while (tmp) {
+		printf("File/Line: %s/%i: Str: %s\n", __FILE__, __LINE__, tmp);
+		tmp = (char *)kcl_lst_get_next(list);
+	}
+
+	kcl_lst_del_datum(list, (void *)two);
 	tmp = (char *)kcl_lst_get_first(list);
 	while (tmp) {
 		printf("File/Line: %s/%i: Str: %s\n", __FILE__, __LINE__, tmp);

@@ -23,15 +23,15 @@ struct kcl_list {
 	struct kcl_lst_obj *list;
 	struct kcl_lst_obj *current;
 	enum kcl_lst_type type;
-	uint count;
-	uint size;
+	unsigned int count;
+	unsigned int size;
 };
 
 static struct kcl_list *
-kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, uint num_elements)
+kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, unsigned int num_elements)
 {
 	struct kcl_list *new_list = kcl_arn_push(arena, sizeof *new_list);
-	if (!new_list) { return (false); }
+	if (!new_list) { return (nullptr); }
 	new_list->type = type;
 	new_list->arena = arena;
 	switch (type) {
@@ -43,7 +43,7 @@ kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, uint num_ele
 		return (new_list);
 	case VARRAY:
 		new_list->list = NULL;
-		for (uint i = 0; i < num_elements; i++) {
+		for (unsigned int i = 0; i < num_elements; i++) {
 			struct kcl_lst_obj *new_obj = kcl_arn_push(new_list->arena, sizeof *new_obj);
 			new_obj->datum = NULL;
 			new_obj->next = new_list->list;
@@ -53,11 +53,11 @@ kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, uint num_ele
 		new_list->size = num_elements;
 		return (new_list);
 	default:
-		return (false);
+		return (nullptr);
 	}
 }
 
-static uint
+static unsigned int
 kcl_lst_add_datum(struct kcl_list *list, void *datum)
 {
 	switch (list->type) {
@@ -74,44 +74,36 @@ kcl_lst_add_datum(struct kcl_list *list, void *datum)
 }
 
 static bool
-kcl_lst_set_element(struct kcl_list *list, void *datum, uint index)
+kcl_lst_del_datum(struct kcl_list *list, void *datum)
 {
 	switch (list->type) {
-	case VARRAY:
-		if (index >= list->size) {
+	case LNKLST:
+		if (list->count > 0) {
+			struct kcl_lst_obj *obj = list->list;
+			if (obj->datum == datum) {
+				list->list = obj->next;
+				return (true);
+			}
+			struct kcl_lst_obj *prev_obj = obj;
+			obj = obj->next;
+			while (obj) {
+				if (obj->datum == datum) {
+					prev_obj->next = obj->next;
+					return (true);
+				} else {
+					prev_obj = obj;
+					obj = obj->next;
+				}
+			}
+			return (false);
+		} else {
 			return (false);
 		}
-		struct kcl_lst_obj *obj = list->list;
-		uint i = 0;
-		while (i < index) {
-			obj = obj->next;
-			i++;
-		}
-		obj->datum = datum;
-		return (true);
 	default:
 		return (false);
 	}
 }
 
-static void *
-kcl_lst_get_element(struct kcl_list *list, uint index)
-{
-	switch (list->type) {
-	case VARRAY:
-		if (index >= list->size) { return (NULL); }
-		struct kcl_lst_obj *obj = list->list;
-		uint i = 0;
-		while (i < index) {
-			obj = obj->next;
-			i++;
-		}
-		return (obj->datum);
-	default:
-		return (NULL);
-	}
-}
-			
 static void *
 kcl_lst_get_first(struct kcl_list *list)
 {
@@ -134,9 +126,48 @@ kcl_lst_get_next(struct kcl_list *list)
 	}
 }
 
+static bool
+kcl_lst_set_element(struct kcl_list *list, void *datum, unsigned int index)
+{
+	switch (list->type) {
+	case VARRAY:
+		if (index >= list->size) {
+			return (false);
+		}
+		struct kcl_lst_obj *obj = list->list;
+		unsigned int i = 0;
+		while (i < index) {
+			obj = obj->next;
+			i++;
+		}
+		obj->datum = datum;
+		return (true);
+	default:
+		return (false);
+	}
+}
+
+static void *
+kcl_lst_get_element(struct kcl_list *list, unsigned int index)
+{
+	switch (list->type) {
+	case VARRAY:
+		if (index >= list->size) { return (NULL); }
+		struct kcl_lst_obj *obj = list->list;
+		unsigned int i = 0;
+		while (i < index) {
+			obj = obj->next;
+			i++;
+		}
+		return (obj->datum);
+	default:
+		return (NULL);
+	}
+}
+			
 /*
 static void *
-kcl_lst_get_datum(struct kcl_list *list, uint key)
+kcl_lst_get_datum(struct kcl_list *list, unsigned int key)
 {
 	struct kcl_lst_obj *obj = list->list;
 	while (obj != NULL) {
