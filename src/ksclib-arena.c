@@ -32,6 +32,7 @@ kcl_arn_init(void *new_memblock, size_t memblock_size)
 }
 */
 
+[[maybe_unused]]
 static struct kcl_arena *
 kcl_arn_alloc(enum kcl_arn_type type, size_t arena_size, size_t increment, bool autogrow)
 {
@@ -49,6 +50,7 @@ kcl_arn_alloc(enum kcl_arn_type type, size_t arena_size, size_t increment, bool 
 	return (new_arena);
 }
 
+[[maybe_unused]]
 static bool
 kcl_arn_grow(struct kcl_arena *arena, uintptr_t req_size)
 {
@@ -66,6 +68,7 @@ kcl_arn_grow(struct kcl_arena *arena, uintptr_t req_size)
 	} else { return (true); }
 }
 
+[[maybe_unused]]
 static void *
 kcl_arn_push(struct kcl_arena *arena, size_t size)
 {
@@ -90,6 +93,7 @@ kcl_arn_push(struct kcl_arena *arena, size_t size)
 	return (new_ptr);
 }
 
+[[maybe_unused]]
 static void
 kcl_arn_reset(struct kcl_arena *arena)
 {

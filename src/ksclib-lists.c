@@ -27,6 +27,7 @@ struct kcl_list {
 	unsigned int size;
 };
 
+[[maybe_unused]]
 static struct kcl_list *
 kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, unsigned int num_elements)
 {
@@ -57,6 +58,7 @@ kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, unsigned int
 	}
 }
 
+[[maybe_unused]]
 static unsigned int
 kcl_lst_add_datum(struct kcl_list *list, void *datum)
 {
@@ -73,6 +75,7 @@ kcl_lst_add_datum(struct kcl_list *list, void *datum)
 	}
 }
 
+[[maybe_unused]]
 static bool
 kcl_lst_del_datum(struct kcl_list *list, void *datum)
 {
@@ -104,6 +107,7 @@ kcl_lst_del_datum(struct kcl_list *list, void *datum)
 	}
 }
 
+[[maybe_unused]]
 static void *
 kcl_lst_get_first(struct kcl_list *list)
 {
@@ -115,6 +119,7 @@ kcl_lst_get_first(struct kcl_list *list)
 	}
 }
 
+[[maybe_unused]]
 static void *
 kcl_lst_get_next(struct kcl_list *list)
 {
@@ -126,6 +131,7 @@ kcl_lst_get_next(struct kcl_list *list)
 	}
 }
 
+[[maybe_unused]]
 static bool
 kcl_lst_set_element(struct kcl_list *list, void *datum, unsigned int index)
 {
@@ -147,6 +153,7 @@ kcl_lst_set_element(struct kcl_list *list, void *datum, unsigned int index)
 	}
 }
 
+[[maybe_unused]]
 static void *
 kcl_lst_get_element(struct kcl_list *list, unsigned int index)
 {
