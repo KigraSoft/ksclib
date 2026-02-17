@@ -56,3 +56,27 @@ kcl_str_cstr_alloc(kcl_str* str)
 {
 	return (strndup(str->str, str->len));
 }
+
+[[maybe_unused]]
+static kcl_str *
+kcl_str_concat_new(const char* str1, size_t str1_len, const char* str2, size_t str2_len, struct kcl_arena *arena)
+{
+	size_t str_len = str1_len + str2_len;
+	kcl_str* new_kcl_str = kcl_arn_push(arena, sizeof new_kcl_str);
+	if (new_kcl_str) {
+		new_kcl_str->str = kcl_arn_push(arena, str_len);
+		if (new_kcl_str->str) {
+			new_kcl_str->size = str_len;
+			new_kcl_str->len = str_len;
+			size_t i, j;
+			for (i = 0; i < str1_len; i++) {
+				new_kcl_str->str[i] = str1[i];
+			}
+			for (j = 0; i < str_len; i++, j++) {
+				new_kcl_str->str[i] = str2[j];
+			}
+			return (new_kcl_str);
+		}
+	}
+	return nullptr;
+}
