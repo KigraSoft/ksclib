@@ -18,8 +18,9 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <stddef.h>
+#include <string.h>
 
 #include "src/ksclib-arena.c"
 #include "src/ksclib-lists.c"
-
+#include "src/ksclib-string.c"
 
