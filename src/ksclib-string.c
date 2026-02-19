@@ -44,6 +44,21 @@ kcl_str_new(const char* new_str, size_t str_size, struct kcl_arena *arena)
 }
 
 [[maybe_unused]]
+static kcl_str *
+kcl_str_slice_new(kcl_str* str, size_t start, size_t len, struct kcl_arena *arena)
+{
+	if ((start + len) > str->size) {
+		return (nullptr);
+	} else {
+		kcl_str* new_kcl_str = kcl_arn_push(arena, sizeof new_kcl_str);
+		new_kcl_str->str = str->str + start;
+		new_kcl_str->len = len;
+		new_kcl_str->size = 0; // 0 size to indicate a read only slice??
+		return (new_kcl_str);
+	}
+}
+
+[[maybe_unused]]
 static size_t
 kcl_str_len(kcl_str* str)
 {
