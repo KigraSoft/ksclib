@@ -26,5 +26,14 @@ main()
 	kcl_str* str3 = kcl_str_slice_new(str23, 0, 5, arena);
 	printf("Test 3: %s\n", kcl_str_cstr_alloc(str3));	
 
+	kcl_str_set_value(str23, "four");
+	printf("Test 4: %s\n", kcl_str_cstr_alloc(str23));
+
+	kcl_str_slice(str1, str23, 1, 2);
+	printf("Test 5: %s\n", kcl_str_cstr_alloc(str1));
+	
+	kcl_str_set_concat(str23, three, 1, two, 1);
+	printf("Test 6: %s\n", kcl_str_cstr_alloc(str23));
+
 	return EXIT_SUCCESS;
 }

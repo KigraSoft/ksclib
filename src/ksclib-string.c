@@ -45,6 +45,19 @@ kcl_str_new(const char* new_str, size_t str_size, struct kcl_arena *arena)
 
 [[maybe_unused]]
 static kcl_str *
+kcl_str_set_value(kcl_str* str, const char* new_val)
+{
+	size_t i = 0;
+	while (i < str->size && new_val[i]) {
+		str->str[i] = new_val[i];
+		i++;
+	}
+	str->len = i;
+	return (str);
+}
+
+[[maybe_unused]]
+static kcl_str *
 kcl_str_slice_new(kcl_str* str, size_t start, size_t len, struct kcl_arena *arena)
 {
 	if ((start + len) > str->size) {
@@ -55,6 +68,20 @@ kcl_str_slice_new(kcl_str* str, size_t start, size_t len, struct kcl_arena *aren
 		new_kcl_str->len = len;
 		new_kcl_str->size = 0; // 0 size to indicate a read only slice??
 		return (new_kcl_str);
+	}
+}
+
+[[maybe_unused]]
+static kcl_str *
+kcl_str_slice(kcl_str* slice, kcl_str* str, size_t start, size_t len)
+{
+	if ((start + len) > str->size) {
+		return (nullptr);
+	} else {
+		slice->str = str->str + start;
+		slice->len = len;
+		slice->size = 0; // 0 size to indicate a read only slice??
+		return (slice);
 	}
 }
 
@@ -95,3 +122,24 @@ kcl_str_concat_new(const char* str1, size_t str1_len, const char* str2, size_t s
 	}
 	return nullptr;
 }
+
+[[maybe_unused]]
+static kcl_str *
+kcl_str_set_concat(kcl_str* str, const char* str1, size_t str1_len, const char* str2, size_t str2_len)
+{
+	size_t str_len = str1_len + str2_len;
+	if (str_len > str->size) {
+		return (nullptr);
+	} else {
+		size_t i, j;
+		for (i = 0; i < str1_len; i++) {
+			str->str[i] = str1[i];
+		}
+		for (j = 0; i < str_len; i++, j++) {
+			str->str[i] = str2[j];
+		}
+		str->len = str_len;
+		return (str);
+	}
+}
+
