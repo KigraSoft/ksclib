@@ -40,7 +40,7 @@ kcl_arn_alloc(enum kcl_arn_type type, size_t arena_size, size_t increment, bool 
 	if (!new_arena) { return 0; }
 
 	new_arena->memblock = malloc(arena_size);
-	if (!new_arena) { return 0; }
+	if (!new_arena->memblock) { return 0; }
 
 	new_arena->size = arena_size;
 	new_arena->stack_pos = 0;
@@ -48,6 +48,56 @@ kcl_arn_alloc(enum kcl_arn_type type, size_t arena_size, size_t increment, bool 
 	new_arena->inc_size = increment;
 	new_arena->autogrow = autogrow;
 	return (new_arena);
+}
+
+[[maybe_unused]]
+void
+kcl_arn__mem_display_line(void* line_mem, size_t base_address, unsigned int line_len)
+{
+	const unsigned int max_line_len = 16;
+	line_len = line_len <= max_line_len ? line_len : max_line_len;
+	unsigned char* mem_vals = (unsigned char*)line_mem;
+	size_t mem_line_address = (uintptr_t)line_mem;
+	
+	printf("%04lx: ", mem_line_address - base_address);
+	
+	for (unsigned int i = 0; i < line_len; i++) {
+		if (!(i % 8)) {
+			printf("  ");
+		}
+		printf("%02X ", mem_vals[i]);
+	}
+	for (unsigned int i = 0; i < line_len; i++) {
+		if (!(i % 8)) {
+			printf("  ");
+		}
+		if (mem_vals[i] < 32 || mem_vals[i] > 126) {
+			printf(".");
+		} else {
+			printf("%c", mem_vals[i]);
+		}
+	}
+	printf("\n");
+}
+		
+[[maybe_unused]]
+void
+kcl_arn_mem_display(struct kcl_arena *arena, size_t display_vals)
+{
+	size_t num_display_vals = display_vals <= arena->size ? display_vals : arena->size;
+	unsigned int num_line_vals = 16;
+	printf("Arena Memory - Type: %s\n", "STACK");
+	printf("  Address: %p\tSize: %lu\tInc Size: %lu\n\n", arena->memblock, arena->size, arena->inc_size);
+	size_t base_mem_address = (uintptr_t)&arena->memblock >> 16 << 16;
+	size_t i = 0;
+	unsigned int j = 0;
+	void* cur_line_mem = arena->memblock;
+	while (i < num_display_vals) {
+		j = (i + num_line_vals) < num_display_vals ? num_line_vals : num_display_vals;
+		kcl_arn__mem_display_line(cur_line_mem, base_mem_address, j);
+		i += num_line_vals;
+		cur_line_mem += num_line_vals;
+	}
 }
 
 [[maybe_unused]]
@@ -81,6 +131,7 @@ kcl_arn_push(struct kcl_arena *arena, size_t size)
 	}
 
 	if (new_pos > arena->size) {
+		// !!!!! this was not a good idea and current pointers could be invalid after realloc
 		if (!arena->autogrow) {
 			return (0);
 		} else if (!kcl_arn_grow(arena, new_pos)) {
