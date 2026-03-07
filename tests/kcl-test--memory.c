@@ -6,14 +6,27 @@
 #include "../ksclib.c"
 #include "../src/ksclib-debug.c"
 
-#define printint(s,x) do { printf("File/Line: %s/%i\t%s: %u - %p\n", __FILE__, __LINE__, s, x, &x); } while (0)
+// #define printint(s,x) do { printf("File/Line: %s/%i\t%s: %u - %p\n", __FILE__, __LINE__, s, x, &x); } while (0)
+
+// #define arena_on_stack
 
 const unsigned int mblock_sz = 256;
 
 int
 main()
 {
-	struct kcl_arena *arena = kcl_arn_alloc(STACKPLUS, 64, mblock_sz, true);
+#ifdef arena_on_stack
+	printf(">+> on stack\n");
+	kcl_arena arena_stack;
+	kcl_arena *arena = &arena_stack;
+	kcl_arn_alloc(&arena, STACKPLUS, 64, mblock_sz, true);
+#else
+	printf(">+> on heap\n");
+	kcl_arena *arena = nullptr;
+	kcl_arn_alloc(&arena, STACKPLUS, 64, mblock_sz, true);
+#endif
+	printf("arena:\t\t%p\n", arena);
+	//struct kcl_arena *arena = kcl_arn_alloc(nullptr, STACKPLUS, 64, mblock_sz, true);
 	kcl_arn_mem_display(arena, (uintptr_t)arena, 96);
 	unsigned int *a = kcl_arn_push(arena, sizeof *a);
 	*a = 1;
@@ -42,7 +55,7 @@ main()
 
 	char* abc = kcl_arn_push(arena, 30);
 	abc[0] = 0;
-	kcl_arn_mem_display(arena, (uintptr_t)a, 96);
+	//kcl_arn_mem_display(arena, (uintptr_t)a, 96);
 	kcl_dbg_printvar("abc", abc);
 	strcpy(abc, "abcdefghijklmnopqrstuvwxyz");
 	kcl_dbg_printvar("abc", abc);

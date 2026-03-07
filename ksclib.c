@@ -1,4 +1,4 @@
-a/*
+/*
   KigraSoft C Library
 
   ksclib.c

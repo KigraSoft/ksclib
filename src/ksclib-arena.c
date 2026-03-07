@@ -34,33 +34,36 @@ typedef struct kcl_arena {
    Document test for kcl_arn_alloc
 */
 [[maybe_unused]]
-static struct kcl_arena *
-kcl_arn_alloc(enum kcl_arn_type type, size_t arena_size, size_t increment, bool autogrow)
+bool
+kcl_arn_alloc(kcl_arena **arena_ptr, enum kcl_arn_type type, size_t arena_size, size_t increment, bool autogrow)
 {
-	struct kcl_arena *new_arena = malloc(sizeof(struct kcl_arena));
-	if (!new_arena) { return nullptr; }
-	new_arena->memblock_cur = malloc(arena_size);
-	if (!new_arena->memblock_cur) { return nullptr; }
-	new_arena->memblock_cur->memblock = new_arena->memblock_cur;
-	new_arena->memblock_cur->next = nullptr;
-	new_arena->memblocks = new_arena->memblock_cur;
-	new_arena->size = arena_size;
-	new_arena->memblocks_num = 1;
-	new_arena->memblock_cur->size = arena_size;
-	new_arena->memblock_cur->stack_pos = 0 + sizeof (kcl_arn__memblock);
-	new_arena->type = type;
+	if (!(*arena_ptr)) {
+		*arena_ptr = malloc(sizeof(kcl_arena));
+	}
+	kcl_arena *arena = *arena_ptr;
+	if (!arena) { return false; }
+	arena->memblock_cur = malloc(arena_size);
+	if (!arena->memblock_cur) { return (false); }
+	arena->memblock_cur->memblock = arena->memblock_cur;
+	arena->memblock_cur->next = nullptr;
+	arena->memblocks = arena->memblock_cur;
+	arena->size = arena_size;
+	arena->memblocks_num = 1;
+	arena->memblock_cur->size = arena_size;
+	arena->memblock_cur->stack_pos = 0 + sizeof (kcl_arn__memblock);
+	arena->type = type;
 
 	switch (type) {
 	case STACKPLUS:
-		new_arena->inc_size = increment;
-		new_arena->autogrow = autogrow;
+		arena->inc_size = increment;
+		arena->autogrow = autogrow;
 		break;
 	case STACK:
-		new_arena->inc_size = 0;
-		new_arena->autogrow = false;
+		arena->inc_size = 0;
+		arena->autogrow = false;
 		break;
 	}
-	return (new_arena);
+	return (true);
 
 }
 
