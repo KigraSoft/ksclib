@@ -29,6 +29,10 @@ typedef struct kcl_arena {
 	unsigned int memblocks_num;
 } kcl_arena;
 
+/**
+   kcl_arn_alloc
+   Document test for kcl_arn_alloc
+*/
 [[maybe_unused]]
 static struct kcl_arena *
 kcl_arn_alloc(enum kcl_arn_type type, size_t arena_size, size_t increment, bool autogrow)
@@ -104,7 +108,7 @@ kcl_arn_mem_display(struct kcl_arena *arena, uintptr_t disp_address, size_t disp
 	case STACKPLUS:
 		printf("Arena Memory - Type: %s\n", "STACKPLUS");
 		printf("  Address: %p\tSize: %lu\tInc Size: %lu\n", arena->memblocks, arena->size, arena->inc_size);
-		printf("  Num Blocks: %lu\t\tCurrent block:\n", arena->memblocks_num);
+		printf("  Num Blocks: %u\t\tCurrent block:\n", arena->memblocks_num);
 		printf("  Address: %p\tSize: %lu\tCur Stack Pos: %lu / %lx\n\n", arena->memblock_cur, arena->memblock_cur->size, arena->memblock_cur->stack_pos, arena->memblock_cur->stack_pos);
 		break;
 	}
@@ -156,6 +160,7 @@ kcl_arn_grow(struct kcl_arena *arena, uintptr_t req_size)
 		arena->memblocks_num++;
 		return (true);
 	}
+	return (false);
 }
 
 [[maybe_unused]]
@@ -197,6 +202,7 @@ kcl_arn_push(struct kcl_arena *arena, size_t size)
 		arena->memblock_cur->stack_pos = new_pos;
 		return ((void *)new_ptr);
 	}
+	return (nullptr);
 }
 
 [[maybe_unused]]
