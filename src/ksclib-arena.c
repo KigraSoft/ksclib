@@ -7,6 +7,14 @@
 
 */
 
+/**
+  \file ksclib-arena.c
+  \brief KigraSoft C Library:  Arena
+
+  A memory arena implementation
+
+*/
+
 enum kcl_arn_type {
 	STACK,
 	STACKPLUS,
@@ -29,9 +37,9 @@ typedef struct kcl_arena {
 	unsigned int memblocks_num;
 } kcl_arena;
 
+/// kcl_arn_alloc brief desc
 /**
-   kcl_arn_alloc
-   Document test for kcl_arn_alloc
+   Document test for kcl_arn_alloc.
 */
 [[maybe_unused]]
 bool
@@ -67,6 +75,10 @@ kcl_arn_alloc(kcl_arena **arena_ptr, enum kcl_arn_type type, size_t arena_size, 
 
 }
 
+/// kcl_arn__mem_display_line brief desc
+/**
+   Document test for kcl_arn__mem_display_line.
+*/
 [[maybe_unused]]
 void
 kcl_arn__mem_display_line(void* line_mem, size_t base_address, unsigned int line_len)
@@ -97,6 +109,10 @@ kcl_arn__mem_display_line(void* line_mem, size_t base_address, unsigned int line
 	printf("\n");
 }
 		
+/// kcl_arn_mem_display brief desc
+/**
+   Document test for kcl_arn_mem_display.
+*/
 [[maybe_unused]]
 void
 kcl_arn_mem_display(struct kcl_arena *arena, uintptr_t disp_address, size_t display_vals)
@@ -128,6 +144,10 @@ kcl_arn_mem_display(struct kcl_arena *arena, uintptr_t disp_address, size_t disp
 	printf("\n");
 }
 
+/// kcl_arn_grow brief desc
+/**
+   Document test for kcl_arn_grow.
+*/
 [[maybe_unused]]
 static bool
 kcl_arn_grow(struct kcl_arena *arena, uintptr_t req_size)
@@ -166,6 +186,10 @@ kcl_arn_grow(struct kcl_arena *arena, uintptr_t req_size)
 	return (false);
 }
 
+/// kcl_arn_push brief desc
+/**
+   Document test for kcl_arn_push.
+*/
 [[maybe_unused]]
 static void *
 kcl_arn_push(struct kcl_arena *arena, size_t size)

@@ -19,11 +19,9 @@
   along with Situsest.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-/** \file ksclib.c
-    
-  KigraSoft C Library
-
-  ksclib.c
+/**
+  \file ksclib.c
+  \brief KigraSoft C Library
 
   KigraSoft C Library is a set of utility functions that I use in my
   other programs.  It is shared so that anyone else that finds it
