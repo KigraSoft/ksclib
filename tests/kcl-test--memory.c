@@ -61,5 +61,7 @@ main()
 	kcl_dbg_printvar("abc", abc);
 	kcl_arn_mem_display(arena, (uintptr_t)abc, 96);
 
+	kcl_arn_free(arena);
+	
 	exit(EXIT_SUCCESS);
 }

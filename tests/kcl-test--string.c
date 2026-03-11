@@ -44,5 +44,9 @@ main()
 	printf("Test 7c: %s\n", kcl_str_cstr_alloc(str4a));
 	kcl_str_append(str4a, str4b);
 	printf("Test 7d: %s\n", kcl_str_cstr_alloc(str4a));
+	printf("Test 7d: %s\n", kcl_str_to_cstr_new(str4a, arena));
+	printf("Test 7d: ");
+	kcl_str_fputs(str4a, stdout);
+	printf("\n");
 	return EXIT_SUCCESS;
 }

@@ -100,6 +100,27 @@ kcl_str_cstr_alloc(kcl_str* str)
 }
 
 [[maybe_unused]]
+static char*
+kcl_str_to_cstr_new(kcl_str* str, kcl_arena* arena)
+{
+	char* cstr = kcl_arn_push(arena, str->len + 1);
+	for (unsigned i = 0; i < str->len; i++) {
+		cstr[i] = str->str[i];
+	}
+	cstr[str->len + 1] = 0;
+	return (cstr);
+}
+
+[[maybe_unused]]
+void
+kcl_str_fputs(kcl_str* str, FILE* stream)
+{
+	for (unsigned i = 0; i < str->len; i++) {
+		fputc(str->str[i], stream);
+	}
+}
+
+[[maybe_unused]]
 static kcl_str *
 kcl_str_concat_new(const char* str1, size_t str1_len, const char* str2, size_t str2_len, struct kcl_arena *arena)
 {

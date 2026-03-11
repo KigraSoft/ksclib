@@ -261,15 +261,12 @@ kcl_arn_reset(struct kcl_arena *arena)
 	}
 }
 
-/*
-struct kcl_arena *
-kcl_arn_init(void *new_memblock, size_t memblock_size)
+[[maybe_unused]]
+static void
+kcl_arn_free(kcl_arena* arena)
 {
-	struct kcl_arena *new_arena = new_memblock;
-	new_arena->size = memblock_size;
-	new_arena->stack_pos = sizeof *new_arena;
-	new_arena->type = STACK;
-	return (new_arean);
+	kcl_arn_reset(arena);
+	free(arena->memblocks);
+	free(arena);
 }
-*/
 
