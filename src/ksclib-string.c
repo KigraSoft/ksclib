@@ -18,13 +18,13 @@ typedef struct kcl_str_obj kcl_str;
 
 struct kcl_str_obj {
 	char*  str;
-	size_t len;
-	size_t size;
+	unsigned len;
+	unsigned size;
 };
 
 [[maybe_unused]]
 static kcl_str *
-kcl_str_new(const char* new_str, size_t str_size, struct kcl_arena *arena)
+kcl_str_new(const char* new_str, unsigned str_size, struct kcl_arena *arena)
 {
 	kcl_str* new_kcl_str = kcl_arn_push(arena, sizeof new_kcl_str);
 	if (new_kcl_str) {
@@ -143,3 +143,33 @@ kcl_str_set_concat(kcl_str* str, const char* str1, size_t str1_len, const char* 
 	}
 }
 
+[[maybe_unused]]
+static bool
+kcl_str_append(kcl_str* str, kcl_str* str2)
+{
+	if (str->size < (str->len + str2->len)) {
+		return (false);
+	} else {
+		for (unsigned i = 0; i < str2->len; i++) {
+			str->str[i + str->len] = str2->str[i];
+		}
+		str->len += str2->len;
+		return (true);
+	}
+}
+
+[[maybe_unused]]
+static bool
+kcl_str_append_cstr(kcl_str* str, const char* str2)
+{
+	int str2_len = strlen(str2);
+	if (str->size < (str->len + str2_len)) {
+		return (false);
+	} else {
+		for (unsigned i = 0; i < str2_len; i++) {
+			str->str[i + str->len] = str2[i];
+		}
+		str->len += str2_len;
+		return (true);
+	}
+}
