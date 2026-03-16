@@ -42,16 +42,13 @@ typedef struct kcl_arena {
    Document test for kcl_arn_alloc.
 */
 [[maybe_unused]]
-bool
-kcl_arn_alloc(kcl_arena **arena_ptr, enum kcl_arn_type type, size_t arena_size, size_t increment, bool autogrow)
+kcl_arena*
+kcl_arn_alloc(enum kcl_arn_type type, size_t arena_size, size_t increment, bool autogrow)
 {
-	if (!(*arena_ptr)) {
-		*arena_ptr = malloc(sizeof(kcl_arena));
-	}
-	kcl_arena *arena = *arena_ptr;
-	if (!arena) { return false; }
+	kcl_arena *arena = malloc(sizeof(kcl_arena));
+	if (!arena) { return nullptr; }
 	arena->memblock_cur = malloc(arena_size);
-	if (!arena->memblock_cur) { return (false); }
+	if (!arena->memblock_cur) { return (nullptr); }
 	arena->memblock_cur->memblock = arena->memblock_cur;
 	arena->memblock_cur->next = nullptr;
 	arena->memblocks = arena->memblock_cur;
@@ -71,8 +68,7 @@ kcl_arn_alloc(kcl_arena **arena_ptr, enum kcl_arn_type type, size_t arena_size, 
 		arena->autogrow = false;
 		break;
 	}
-	return (true);
-
+	return (arena);
 }
 
 /// kcl_arn__mem_display_line brief desc
@@ -227,6 +223,7 @@ kcl_arn_push(struct kcl_arena *arena, size_t size)
 
 		new_ptr = (uintptr_t)arena->memblock_cur + cur_pos;
 		arena->memblock_cur->stack_pos = new_pos;
+		//printf(">>arn %p - %lu - %lu\n", arena, arena->size, size);		
 		return ((void *)new_ptr);
 	}
 	return (nullptr);
