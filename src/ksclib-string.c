@@ -107,7 +107,7 @@ kcl_str_to_cstr_new(kcl_str* str, kcl_arena* arena)
 	for (unsigned i = 0; i < str->len; i++) {
 		cstr[i] = str->str[i];
 	}
-	cstr[str->len + 1] = 0;
+	cstr[str->len] = 0;
 	return (cstr);
 }
 
