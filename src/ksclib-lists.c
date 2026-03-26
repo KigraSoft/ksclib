@@ -13,19 +13,19 @@ enum kcl_lst_type {
 	LNKLST
 };
 
-struct kcl_lst_obj {
+typedef struct kcl_lst_obj {
 	void *datum;
 	struct kcl_lst_obj *next;
-};
+} kcl_lst_obj;
 
-struct kcl_list {
-	struct kcl_arena *arena;
-	struct kcl_lst_obj *list;
-	struct kcl_lst_obj *current;
+typedef struct kcl_list {
+	kcl_arena *arena;
+	kcl_lst_obj *list;
+	kcl_lst_obj *current;
 	enum kcl_lst_type type;
 	unsigned int count;
 	unsigned int size;
-};
+} kcl_list;
 
 [[maybe_unused]]
 static struct kcl_list *
