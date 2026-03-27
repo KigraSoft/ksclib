@@ -15,8 +15,9 @@ main()
 	const char *three = "three";
 	//char *tmp;
 	
-	struct kcl_arena *arena = nullptr;
-	kcl_arn_alloc(&arena, STACK, mblock_sz, mblock_sz, true);
+	//struct kcl_arena *arena = nullptr;
+	//kcl_arn_alloc(&arena, STACK, mblock_sz, mblock_sz, true);
+	kcl_arena *arena = kcl_arn_alloc(STACK, mblock_sz, mblock_sz, true);
 
 	kcl_str* str1 = kcl_str_new(one, 2, arena);
 	printf("Test 1: %s\n", kcl_str_cstr_alloc(str1));
@@ -40,7 +41,7 @@ main()
 	kcl_str* str4b = kcl_str_new("world!", 8, arena);
 	printf("Test 7a: %s - %u - %u\n", kcl_str_cstr_alloc(str4a), str4a->len, str4a->size);
 	printf("Test 7b: %s\n", kcl_str_cstr_alloc(str4b));
-	kcl_str_append_cstr(str4a, " ");
+	kcl_str_append(str4a, " ");
 	printf("Test 7c: %s\n", kcl_str_cstr_alloc(str4a));
 	kcl_str_append(str4a, str4b);
 	printf("Test 7d: %s\n", kcl_str_cstr_alloc(str4a));
@@ -48,5 +49,14 @@ main()
 	printf("Test 7d: ");
 	kcl_str_fputs(str4a, stdout);
 	printf("\n");
+
+	kcl_str* str5a = kcl_str_new("To be ", 20, arena);
+	kcl_str* str5b = kcl_str_new("or ", 4, arena);
+	kcl_str_append(str5a, str5b);
+	kcl_str_append(str5a, "not to be.\n");
+	printf("Test 8: ");
+	kcl_str_fputs(str5a, stdout);
+	printf("\n");
+	
 	return EXIT_SUCCESS;
 }

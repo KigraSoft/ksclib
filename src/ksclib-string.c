@@ -164,9 +164,15 @@ kcl_str_set_concat(kcl_str* str, const char* str1, size_t str1_len, const char* 
 	}
 }
 
+#define kcl_str_append(a, b)			\
+	_Generic((b),				\
+		 kcl_str*: kcl_str_append_kstr,	\
+		 char*: kcl_str_append_cstr)	\
+	(a, b)
+
 [[maybe_unused]]
 static bool
-kcl_str_append(kcl_str* str, kcl_str* str2)
+kcl_str_append_kstr(kcl_str* str, kcl_str* str2)
 {
 	if (str->size < (str->len + str2->len)) {
 		return (false);
