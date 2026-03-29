@@ -200,3 +200,41 @@ kcl_str_append_cstr(kcl_str* str, const char* str2)
 		return (true);
 	}
 }
+
+#define kcl_str_find(a, b, c, d)		\
+	_Generic((c),				\
+		 char*: kcl_str_find_cstr,	\
+		 int: kcl_str_find_char)	\
+	(a, b, c, d)
+
+[[maybe_unused]]
+static bool
+kcl_str_find_cstr(kcl_str* str, unsigned start_pos, char* query, unsigned* result_pos)
+{
+	size_t query_len = strlen(query);
+	for (unsigned i = start_pos; i < str->len; i++) {
+		if (str->str[i] == query[0]) {
+			for (unsigned j = 1; j < query_len; j++) {
+				if (str->str[i + j] != query[j]) {
+					return false;
+				}
+			}
+			*result_pos = i;
+			return true;
+		}
+	}
+	return false;
+}
+
+[[maybe_unused]]
+static bool
+kcl_str_find_char(kcl_str* str, unsigned start_pos, int query, unsigned* result_pos)
+{
+	for (unsigned i = start_pos; i < str->len; i++) {
+		if (str->str[i] == query) {
+			*result_pos = i;
+			return true;
+		}
+	}
+	return false;
+}
