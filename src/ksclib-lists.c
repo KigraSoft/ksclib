@@ -76,6 +76,32 @@ kcl_lst_add_datum(struct kcl_list *list, void *datum)
 }
 
 [[maybe_unused]]
+static unsigned int
+kcl_lst_append_datum(struct kcl_list *list, void *datum)
+{
+	switch (list->type) {
+	case LNKLST:
+		struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
+		new_obj->datum = datum;
+		if (list->list) {
+			struct kcl_lst_obj* obj = list->list;
+			while (obj->next) {
+				obj = obj->next;
+			}
+			new_obj->next = obj->next;  // should be nullptr
+			obj->next = new_obj;
+		} else {
+			new_obj->next = list->list; // should be nullptr
+			list->list = new_obj;
+		}
+		list->count++;
+		return (list->count);
+	default:
+		return (0);
+	}
+}
+
+[[maybe_unused]]
 static bool
 kcl_lst_del_datum(struct kcl_list *list, void *datum)
 {
