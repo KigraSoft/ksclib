@@ -5,7 +5,7 @@
 #include <assert.h>
 #include "../ksclib.c"
 
-const unsigned int mblock_sz = 16;
+const unsigned int mblock_sz = 1024;
 
 int
 main()
@@ -14,7 +14,7 @@ main()
 	const char *two = "two";
 	const char *three = "three";
 	char *tmp;
-	
+
 	struct kcl_arena *arena = kcl_arn_alloc(STACK, mblock_sz, mblock_sz, true);
 	struct kcl_list *list = kcl_lst_alloc_list(LNKLST, arena, 0);
 
@@ -68,4 +68,13 @@ main()
 	printf("Line: %i: Val b[4]: %i\n", __LINE__, *b[4]);
 	printf("Size: %i\n", arena->size);
 	*/
+
+	printf(">>> testing...\n");
+	struct kcl_list *kvlist = kcl_lst_alloc_list(KV_STR, arena, 0);
+	kcl_str* str_one = kcl_str_new("ONE", 3, arena);
+	kcl_str* str_two = kcl_str_new("TWO", 3, arena);
+	kcl_lst_add_datum_w_key(kvlist, (void *)one, str_one);
+	printf(">>> add datum complete - %u\n", kvlist->count);
+	tmp = (char *)kcl_lst_get_val(kvlist, str_two);
+	printf(">>> val: %s", tmp);
 }

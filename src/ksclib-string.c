@@ -8,12 +8,12 @@
   Standard function prefix:  kcl_str_
 
 */
-
+/*
 enum kcl_lst_type {
 	VARRAY,
 	LNKLST
 };
-
+*/
 typedef struct kcl_str_obj kcl_str;
 
 struct kcl_str_obj {
@@ -237,4 +237,20 @@ kcl_str_find_char(kcl_str* str, unsigned start_pos, int query, unsigned* result_
 		}
 	}
 	return false;
+}
+
+[[maybe_unused]]
+static bool
+kcl_str_equal(kcl_str* str1, kcl_str* str2)
+{
+	if (str1->len == str2->len) {
+		for (unsigned i = 0; i < str1->len; i++) {
+			if (str1->str[i] != str2->str[i]) {
+				return false;
+			}
+		}
+		return true;
+	} else {
+		return false;
+	}
 }

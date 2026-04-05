@@ -10,21 +10,24 @@
 
 enum kcl_lst_type {
 	VARRAY,
-	LNKLST
+	LNKLST,
+	KV_STR
 };
 
 typedef struct kcl_lst_obj {
-	void *datum;
-	struct kcl_lst_obj *next;
+	void		*datum;
+	struct kcl_lst_obj*	 next;
+	struct kcl_lst_obj*	 prev;
+	kcl_str*	 key_str;
 } kcl_lst_obj;
 
 typedef struct kcl_list {
-	kcl_arena *arena;
-	kcl_lst_obj *list;
-	kcl_lst_obj *current;
-	enum kcl_lst_type type;
-	unsigned int count;
-	unsigned int size;
+	kcl_arena		*arena;
+	kcl_lst_obj		*list;
+	kcl_lst_obj		*current;
+	enum kcl_lst_type	 type;
+	unsigned int		 count;
+	unsigned int		 size;
 } kcl_list;
 
 [[maybe_unused]]
@@ -35,23 +38,26 @@ kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, unsigned int
 	if (!new_list) { return (nullptr); }
 	new_list->type = type;
 	new_list->arena = arena;
+	new_list->list = NULL;
+	new_list->count = 0;
 	switch (type) {
 	case LNKLST:
-		new_list->list = NULL;
-		new_list->current = NULL;
-		new_list->count = 0;
-		new_list->size = num_elements;
+		//new_list->current = NULL;
+		new_list->size = 0;
 		return (new_list);
 	case VARRAY:
-		new_list->list = NULL;
+		//new_list->list = NULL;
 		for (unsigned int i = 0; i < num_elements; i++) {
 			struct kcl_lst_obj *new_obj = kcl_arn_push(new_list->arena, sizeof *new_obj);
 			new_obj->datum = NULL;
 			new_obj->next = new_list->list;
 			new_list->list = new_obj;
 		}
-		new_list->count = 0;
+		//new_list->count = 0;
 		new_list->size = num_elements;
+		return (new_list);
+	case KV_STR:
+		new_list->size = 0;
 		return (new_list);
 	default:
 		return (nullptr);
@@ -60,12 +66,22 @@ kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, unsigned int
 
 [[maybe_unused]]
 static unsigned int
-kcl_lst_add_datum(struct kcl_list *list, void *datum)
+kcl_lst_add_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key)
 {
+	printf(">>> add datum: %p\t%p\t%p\n", list, datum, key);
+	struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
 	switch (list->type) {
 	case LNKLST:
-		struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
+		//struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
 		new_obj->datum = datum;
+		new_obj->next = list->list;
+		list->list = new_obj;
+		list->count++;
+		return (list->count);
+	case KV_STR:
+		//struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
+		new_obj->datum = datum;
+		new_obj->key_str = key;
 		new_obj->next = list->list;
 		list->list = new_obj;
 		list->count++;
@@ -75,14 +91,34 @@ kcl_lst_add_datum(struct kcl_list *list, void *datum)
 	}
 }
 
+#define kcl_lst_add_datum(a, b) kcl_lst_add_datum_w_key(a, b, nullptr)
+
 [[maybe_unused]]
 static unsigned int
-kcl_lst_append_datum(struct kcl_list *list, void *datum)
+kcl_lst_append_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key)
 {
+	struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
 	switch (list->type) {
 	case LNKLST:
-		struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
+		//struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
 		new_obj->datum = datum;
+		if (list->list) {
+			struct kcl_lst_obj* obj = list->list;
+			while (obj->next) {
+				obj = obj->next;
+			}
+			new_obj->next = obj->next;  // should be nullptr
+			obj->next = new_obj;
+		} else {
+			new_obj->next = list->list; // should be nullptr
+			list->list = new_obj;
+		}
+		list->count++;
+		return (list->count);
+	case KV_STR:
+		//struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj, kcl_str* key);
+		new_obj->datum = datum;
+		new_obj->key_str = key;
 		if (list->list) {
 			struct kcl_lst_obj* obj = list->list;
 			while (obj->next) {
@@ -101,12 +137,15 @@ kcl_lst_append_datum(struct kcl_list *list, void *datum)
 	}
 }
 
+#define kcl_lst_append_datum(a, b) kcl_lst_append_datum_w_key(a, b, nullptr)
+
 [[maybe_unused]]
 static bool
 kcl_lst_del_datum(struct kcl_list *list, void *datum)
 {
 	switch (list->type) {
 	case LNKLST:
+	case KV_STR:
 		if (list->count > 0) {
 			struct kcl_lst_obj *obj = list->list;
 			if (obj->datum == datum) {
@@ -154,6 +193,34 @@ kcl_lst_get_next(struct kcl_list *list)
 		return (list->current->datum);
 	} else {
 		return (NULL);
+	}
+}
+
+[[maybe_unused]]
+static void *
+kcl_lst_get_val(kcl_list* list, kcl_str* key) {
+	switch (list->type) {
+	case KV_STR:
+		if (!list->count) {
+			return nullptr;
+		} else {
+			kcl_lst_obj* obj = list->list;
+			if (kcl_str_equal(key, obj->key_str)) {
+				printf(">>> %p\t%p\t%p\n", key, obj->key_str, obj->datum);
+				return obj->datum;
+			}
+			obj = obj->next;
+			while (obj) {
+				if (kcl_str_equal(key, obj->key_str)) {
+					return obj->datum;
+				} else {
+					obj = obj->next;
+				}
+			}
+			return nullptr;
+		}
+	default:
+		return nullptr;;
 	}
 }
 
