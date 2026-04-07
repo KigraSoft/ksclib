@@ -254,3 +254,26 @@ kcl_str_equal(kcl_str* str1, kcl_str* str2)
 		return false;
 	}
 }
+
+[[maybe_unused]]
+static void
+kcl_str_trim(kcl_str* str)
+{
+	unsigned start_posn = 0;
+	unsigned end_posn = str->len - 1;
+	unsigned new_len;
+	while (str->str[start_posn] == ' ') {
+		start_posn++;
+	}
+	while (str->str[end_posn] == ' ') {
+		end_posn--;
+	}
+	new_len = end_posn - start_posn + 1;
+	if (start_posn > 0) {
+		for (unsigned i = 0; i < new_len; i++) {
+			str->str[i] = str->str[i + start_posn];
+		}
+	}
+	str->len = new_len;
+}
+	

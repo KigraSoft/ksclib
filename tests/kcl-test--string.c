@@ -57,6 +57,11 @@ main()
 	printf("Test 8: ");
 	kcl_str_fputs(str5a, stdout);
 	printf("\n");
+
+	kcl_str* str6 = kcl_str_new("    Trim Testing     ", 22, arena);
+	printf("Trim testing:\n  >>>%s<<<\n", kcl_str_to_cstr_new(str6, arena));
+	kcl_str_trim(str6);
+	printf("  >>>%s<<<\n", kcl_str_to_cstr_new(str6, arena));
 	
 	return EXIT_SUCCESS;
 }
