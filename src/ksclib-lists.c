@@ -197,6 +197,17 @@ kcl_lst_get_next(struct kcl_list *list)
 }
 
 [[maybe_unused]]
+static kcl_str *
+kcl_lst_get_cur_key(struct kcl_list *list)
+{
+	if (list->current) {
+		return list->current->key_str;
+	} else {
+		return nullptr;
+	}
+}
+
+[[maybe_unused]]
 static void *
 kcl_lst_get_val(kcl_list* list, kcl_str* key) {
 	switch (list->type) {

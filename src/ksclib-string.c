@@ -269,10 +269,14 @@ kcl_str_trim(kcl_str* str)
 		end_posn--;
 	}
 	new_len = end_posn - start_posn + 1;
-	if (start_posn > 0) {
-		for (unsigned i = 0; i < new_len; i++) {
-			str->str[i] = str->str[i + start_posn];
+	if (str->size > 0) { // if not string slice move text to beginning of str
+		if (start_posn > 0) {
+			for (unsigned i = 0; i < new_len; i++) {
+				str->str[i] = str->str[i + start_posn];
+			}
 		}
+	} else { // if string slice; just reposition pointer
+		str->str = str->str + start_posn;
 	}
 	str->len = new_len;
 }
