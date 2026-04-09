@@ -68,7 +68,7 @@ kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, unsigned int
 static unsigned int
 kcl_lst_add_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key)
 {
-	printf(">>> add datum: %p\t%p\t%p\n", list, datum, key);
+	//printf(">>> add datum: %p\t%p\t%p\n", list, datum, key);
 	struct kcl_lst_obj *new_obj = kcl_arn_push(list->arena, sizeof *new_obj);
 	switch (list->type) {
 	case LNKLST:
@@ -217,7 +217,7 @@ kcl_lst_get_val(kcl_list* list, kcl_str* key) {
 		} else {
 			kcl_lst_obj* obj = list->list;
 			if (kcl_str_equal(key, obj->key_str)) {
-				printf(">>> %p\t%p\t%p\n", key, obj->key_str, obj->datum);
+				//printf(">>> %p\t%p\t%p\n", key, obj->key_str, obj->datum);
 				return obj->datum;
 			}
 			obj = obj->next;

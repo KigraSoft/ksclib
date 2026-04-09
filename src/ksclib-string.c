@@ -60,7 +60,7 @@ kcl_str_set_value(kcl_str* str, const char* new_val)
 static kcl_str *
 kcl_str_slice_new(kcl_str* str, size_t start, size_t len, struct kcl_arena *arena)
 {
-	if ((start + len) > str->size) {
+	if ((start + len) > str->len) {
 		return (nullptr);
 	} else {
 		kcl_str* new_kcl_str = kcl_arn_push(arena, sizeof new_kcl_str);
@@ -75,7 +75,7 @@ kcl_str_slice_new(kcl_str* str, size_t start, size_t len, struct kcl_arena *aren
 static kcl_str *
 kcl_str_slice(kcl_str* slice, kcl_str* str, size_t start, size_t len)
 {
-	if ((start + len) > str->size) {
+	if ((start + len) > str->len) {
 		return (nullptr);
 	} else {
 		slice->str = str->str + start;
