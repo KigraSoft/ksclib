@@ -22,6 +22,39 @@ struct kcl_str_obj {
 	unsigned size;
 };
 
+
+//
+// ** not good way to do this
+//
+enum kcl_lst_type {
+	VARRAY,
+	LNKLST,
+	KV_STR
+};
+typedef struct kcl_lst_obj {
+	void		*datum;
+	struct kcl_lst_obj*	 next;
+	struct kcl_lst_obj*	 prev;
+	kcl_str*	 key_str;
+} kcl_lst_obj;
+typedef struct kcl_list {
+	kcl_arena		*arena;
+	kcl_lst_obj		*list;
+	kcl_lst_obj		*current;
+	enum kcl_lst_type	 type;
+	unsigned int		 count;
+	unsigned int		 size;
+} kcl_list;
+
+static struct kcl_list * kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, unsigned int num_elements);
+static unsigned int kcl_lst_add_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key);
+static unsigned int kcl_lst_append_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key);
+
+//
+// move to somewhere else
+//
+
+
 [[maybe_unused]]
 static kcl_str *
 kcl_str_new(const char* new_str, unsigned str_size, struct kcl_arena *arena)
@@ -85,11 +118,16 @@ kcl_str_slice(kcl_str* slice, kcl_str* str, size_t start, size_t len)
 	}
 }
 
-[[maybe_unused]]
-static size_t
+[[maybe_unused]] inline static size_t
 kcl_str_len(kcl_str* str)
 {
 	return (str->len);
+}
+
+[[maybe_unused]] inline static char
+kcl_str_get_char(kcl_str* str, unsigned position)
+{
+	return str->str[position];
 }
 
 [[maybe_unused]]
@@ -281,3 +319,29 @@ kcl_str_trim(kcl_str* str)
 	str->len = new_len;
 }
 	
+[[maybe_unused]] static kcl_list*
+kcl_str_get_lines(kcl_str* str, kcl_arena* arena)
+{
+	unsigned cur_posn = 0;
+	unsigned qry_posn = 0;
+	unsigned str_len = kcl_str_len(str);
+	kcl_str* line;
+	kcl_list* line_list = kcl_lst_alloc_list(LNKLST, arena, 0);
+	if (!line_list) { return (nullptr); }
+	//kcl_lst_add_datum(line_list, cur_posn);
+	while (cur_posn < str_len) {
+		if (kcl_str_find(str, cur_posn, '\n', &qry_posn)) {
+			line = kcl_str_slice_new(str, cur_posn, qry_posn - cur_posn, arena);
+			cur_posn = qry_posn + 1;
+		} else {
+			line = kcl_str_slice_new(str, cur_posn, str_len - cur_posn, arena);
+		}
+		if (line) {
+			kcl_lst_append_datum_w_key(line_list, line, nullptr);
+		} else {
+			return (nullptr);
+		}
+	}
+	return (line_list);
+}
+
