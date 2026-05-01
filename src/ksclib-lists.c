@@ -8,30 +8,6 @@
 
 */
 
-/*
-enum kcl_lst_type {
-	VARRAY,
-	LNKLST,
-	KV_STR
-};
-
-typedef struct kcl_lst_obj {
-	void		*datum;
-	struct kcl_lst_obj*	 next;
-	struct kcl_lst_obj*	 prev;
-	kcl_str*	 key_str;
-} kcl_lst_obj;
-
-typedef struct kcl_list {
-	kcl_arena		*arena;
-	kcl_lst_obj		*list;
-	kcl_lst_obj		*current;
-	enum kcl_lst_type	 type;
-	unsigned int		 count;
-	unsigned int		 size;
-} kcl_list;
-*/
-
 #include "ksclib-lists.h"
 
 [[maybe_unused]]
@@ -95,8 +71,6 @@ kcl_lst_add_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key)
 	}
 }
 
-// #define kcl_lst_add_datum(a, b) kcl_lst_add_datum_w_key(a, b, nullptr)
-
 [[maybe_unused]]
 static unsigned int
 kcl_lst_append_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key)
@@ -140,8 +114,6 @@ kcl_lst_append_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key)
 		return (0);
 	}
 }
-
-// #define kcl_lst_append_datum(a, b) kcl_lst_append_datum_w_key(a, b, nullptr)
 
 [[maybe_unused]]
 static bool
@@ -281,18 +253,3 @@ kcl_lst_get_element(struct kcl_list *list, unsigned int index)
 	}
 }
 			
-/*
-static void *
-kcl_lst_get_datum(struct kcl_list *list, unsigned int key)
-{
-	struct kcl_lst_obj *obj = list->list;
-	while (obj != NULL) {
-		if (obj->key == key) {
-			return (obj->datum);
-		} else {
-			obj = obj->next;
-		}
-	}
-	return (NULL);
-}
-*/	

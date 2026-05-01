@@ -15,30 +15,6 @@
 
 */
 
-/*
-enum kcl_arn_type {
-	STACK,
-	STACKPLUS,
-};
-
-typedef struct kcl_arn__memblock {
-	void                 *memblock;
-	uintptr_t             stack_pos;
-	size_t                size;
-	struct kcl_arn__memblock    *next;
-} kcl_arn__memblock;
-
-typedef struct kcl_arena {
-	size_t       size;
-	size_t       inc_size;
-	enum kcl_arn_type type;
-	bool         autogrow;
-	kcl_arn__memblock *memblocks;
-	kcl_arn__memblock *memblock_cur;
-	unsigned int memblocks_num;
-} kcl_arena;
-*/
-
 #include "ksclib-arena.h"
 
 /// kcl_arn_alloc brief desc

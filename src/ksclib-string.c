@@ -8,59 +8,10 @@
   Standard function prefix:  kcl_str_
 
 */
-/*
-enum kcl_lst_type {
-	VARRAY,
-	LNKLST
-};
-*/
-
-/*
-typedef struct kcl_str_obj kcl_str;
-
-struct kcl_str_obj {
-	char*  str;
-	unsigned len;
-	unsigned size;
-};
-*/
 
 #include "ksclib-arena.h"
 #include "ksclib-lists.h"
 #include "ksclib-string.h"
-
-//
-// ** not good way to do this
-//
-/*
-enum kcl_lst_type {
-	VARRAY,
-	LNKLST,
-	KV_STR
-};
-typedef struct kcl_lst_obj {
-	void		*datum;
-	struct kcl_lst_obj*	 next;
-	struct kcl_lst_obj*	 prev;
-	kcl_str*	 key_str;
-} kcl_lst_obj;
-typedef struct kcl_list {
-	kcl_arena		*arena;
-	kcl_lst_obj		*list;
-	kcl_lst_obj		*current;
-	enum kcl_lst_type	 type;
-	unsigned int		 count;
-	unsigned int		 size;
-} kcl_list;
-
-static struct kcl_list * kcl_lst_alloc_list(enum kcl_lst_type type, struct kcl_arena *arena, unsigned int num_elements);
-static unsigned int kcl_lst_add_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key);
-static unsigned int kcl_lst_append_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key);
-*/
-//
-// move to somewhere else
-//
-
 
 [[maybe_unused]]
 static kcl_str *
@@ -209,14 +160,6 @@ kcl_str_set_concat(kcl_str* str, const char* str1, size_t str1_len, const char* 
 	}
 }
 
-/*
-#define kcl_str_append(a, b)			\
-	_Generic((b),				\
-		 kcl_str*: kcl_str_append_kstr,	\
-		 char*: kcl_str_append_cstr)	\
-	(a, b)
-*/
-
 [[maybe_unused]]
 static bool
 kcl_str_append_kstr(kcl_str* str, kcl_str* str2)
@@ -247,14 +190,6 @@ kcl_str_append_cstr(kcl_str* str, const char* str2)
 		return (true);
 	}
 }
-
-/*
-#define kcl_str_find(a, b, c, d)		\
-	_Generic((c),				\
-		 char*: kcl_str_find_cstr,	\
-		 int: kcl_str_find_char)	\
-	(a, b, c, d)
-*/
 
 [[maybe_unused]]
 static bool
