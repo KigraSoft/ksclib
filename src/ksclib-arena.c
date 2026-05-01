@@ -15,6 +15,7 @@
 
 */
 
+/*
 enum kcl_arn_type {
 	STACK,
 	STACKPLUS,
@@ -36,6 +37,9 @@ typedef struct kcl_arena {
 	kcl_arn__memblock *memblock_cur;
 	unsigned int memblocks_num;
 } kcl_arena;
+*/
+
+#include "ksclib-arena.h"
 
 /// kcl_arn_alloc brief desc
 /**

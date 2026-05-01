@@ -8,6 +8,7 @@
 
 */
 
+/*
 enum kcl_lst_type {
 	VARRAY,
 	LNKLST,
@@ -29,6 +30,9 @@ typedef struct kcl_list {
 	unsigned int		 count;
 	unsigned int		 size;
 } kcl_list;
+*/
+
+#include "ksclib-lists.h"
 
 [[maybe_unused]]
 static struct kcl_list *
@@ -91,7 +95,7 @@ kcl_lst_add_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key)
 	}
 }
 
-#define kcl_lst_add_datum(a, b) kcl_lst_add_datum_w_key(a, b, nullptr)
+// #define kcl_lst_add_datum(a, b) kcl_lst_add_datum_w_key(a, b, nullptr)
 
 [[maybe_unused]]
 static unsigned int
@@ -137,7 +141,7 @@ kcl_lst_append_datum_w_key(struct kcl_list *list, void *datum, kcl_str* key)
 	}
 }
 
-#define kcl_lst_append_datum(a, b) kcl_lst_append_datum_w_key(a, b, nullptr)
+// #define kcl_lst_append_datum(a, b) kcl_lst_append_datum_w_key(a, b, nullptr)
 
 [[maybe_unused]]
 static bool
@@ -209,7 +213,8 @@ kcl_lst_get_cur_key(struct kcl_list *list)
 
 [[maybe_unused]]
 static void *
-kcl_lst_get_val(kcl_list* list, kcl_str* key) {
+kcl_lst_get_val(kcl_list* list, kcl_str* key)
+{
 	switch (list->type) {
 	case KV_STR:
 		if (!list->count) {
